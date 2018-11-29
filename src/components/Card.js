@@ -3,6 +3,7 @@ import { Text, View, StyleSheet , Image, TouchableOpacity } from 'react-native'
 import { FONTS } from '../helpers/FONTS'
 import { Icon } from 'native-base'
 import { getCurrentUser } from '../helpers/auth';
+import { getSubscripcion, postSubscripcion } from '../helpers/subscription';
 
 export default class Card extends Component {
   state = {
@@ -17,9 +18,37 @@ export default class Card extends Component {
       });
     }
   }
+  ingresarCurso = async () => {
+    try{
+      const user = await getCurrentUser();
+      const { curso } = this.props;
+      /* Aqui debo crear una subscripcion ... pero antes buscar si existe dicha subscripcion antes */
+      const _idUser = user._id;
+      const _idCurso = curso._id;
+      const resp = await getSubscripcion(_idUser,_idCurso);
+      if(resp.ok){
+        const { subscripcion } = resp;
+        this.props.navigation.navigate('Tema',{
+          index: subscripcion.temaActual,
+          curso: curso
+        });
+      }else{// No esta suscrito
+        if(this.state.lock) throw 'Curso bloqueado'
+        const resp = await postSubscripcion(_idUser,_idCurso);
+        if( !resp.ok ) throw 'No se pudo subscribir al curso correctamente'
+        const { subscripcion } = resp;
+        this.props.navigation.navigate('Tema',{
+          index: subscripcion.temaActual,
+          curso: curso
+        });
+      }
+    }catch(e){
+      console.log(e);
+    }
+    
+  }
   render(){
     const { curso } = this.props;
-    console.log(curso);
     const colorIcon = { 
       color: this.state.lock? 'red':'green'
     };
@@ -28,7 +57,7 @@ export default class Card extends Component {
       <View 
         style = { styles.Tema }
         >
-        <TouchableOpacity onPress = { () => console.log(':v')}>
+        <TouchableOpacity onPress = { this.ingresarCurso }>
           <Image
             style = { styles.TemaImage }
             source = {{uri: curso.urlImage}}

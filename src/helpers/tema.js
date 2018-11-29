@@ -1,12 +1,11 @@
 import { urlServer } from "../config/config";
 
-
-const getCursos = async () => {
-  const resp = await fetch(`${urlServer}/curso`)
+const getTema = async (_idTema) => {
+  const resp = await fetch(`${urlServer}/tema/${_idTema}`)
   const respJson = await resp.json();
   return respJson;
 }
 
 export {
-  getCursos
+  getTema
 }

@@ -1,69 +1,152 @@
 import React, { Component } from 'react'
 import { Text, View,  StyleSheet , Image , ScrollView} from 'react-native'
-import { Header, Icon } from 'native-base'
-import { Constants } from 'expo'
+import { Icon } from 'native-base'
 import { FONTS } from '../../../helpers/FONTS';
+import { getTema } from '../../../helpers/tema';
+import { getCurrentUser } from '../../../helpers/auth';
+import { getSubscripcion, updateTemaActual } from '../../../helpers/subscription';
+
 export default class Tema extends Component {
+  state = {
+    tema: null
+  }
+  componentDidMount = async () => {
+    const index = this.props.navigation.getParam('index','No-INDEX');
+    const curso = this.props.navigation.getParam('curso','No-Curso');
+    const _idTemaActual = curso.temas[index]
+    const resp = await getTema(_idTemaActual);
+    if(resp.ok){
+      this.setState({
+        tema: resp.tema
+      });
+    } 
+  }
+  renderContenido(){
+    const { contenido } = this.state.tema;
+    return contenido.map((parrafo)=>{
+      if(parrafo.tipo === 'TEXT'){
+        return (
+          <Text key = {parrafo._id} style = { styles.Parrafo }>{parrafo.text}</Text>
+        );
+      }else{
+        return(
+          <View key = { parrafo._id } style = { styles.ImageContainer }>
+            <Image style = { styles.Image } source = {{uri : parrafo.text}}/>
+          </View>
+        )
+      }
+    })
+  }
+  handleDisabledAnterior = () => {
+    const index = this.props.navigation.getParam('index','No-INDEX');
+    return index === 0;    
+  }
+  handleDisabledSiguiente = () => {
+    const index = this.props.navigation.getParam('index','No-INDEX');
+    const curso = this.props.navigation.getParam('curso','No-CURSO');    
+    return index === curso.temas.length - 1;
+  }
+  handleAnterior = async () => {
+    const curso = this.props.navigation.getParam('curso','No-CURSO');
+    const index = this.props.navigation.getParam('index','No-INDEX');
+    try{
+      const user = await getCurrentUser();
+      const resp = await getSubscripcion(user._id,curso._id);
+      if(!resp.ok) throw resp.err
+      this.props.navigation.push('Tema',{
+        index: index - 1,
+        curso: curso
+      });
+        
+    }catch(e){
+      console.log('ERROR',e);
+    }
+  }
+  handleSiguiente = async () => {
+    const curso = this.props.navigation.getParam('curso','No-Curso');
+    const index = this.props.navigation.getParam('index','No-INDEX');
+    console.log('CLICK');
+    try{
+      const user = await getCurrentUser();
+      /* GET subscripcion */
+      const resp = await getSubscripcion(user._id,curso._id);
+      /* actualizar Subscripcion */
+      if(!resp.ok) throw resp.err
+      
+      if(resp.subscripcion.temaActual === index ){
+        const newResp = await updateTemaActual(resp.subscripcion._id,resp.subscripcion.temaActual + 1);
+        if(!newResp.ok) throw resp.err
+        this.props.navigation.push('Tema',{
+          index: newResp.subscripcion.temaActual,
+          curso: curso
+        });
+      }else{
+        this.props.navigation.push('Tema',{
+          index: index + 1,
+          curso: curso
+        });
+      }   
+    }catch(e){
+      console.log('ERROR',e);
+    }
+  }
+  handleEvaluar = async () => {
+    
+    
+  }
   render() {
+    if(!this.state.tema){
+      return <Text>Loading...</Text>
+    }
     return (
-      <View style = {{ flex: 1}}>
-        <View style ={{ height: Constants.statusBarHeight }}/>
-        <Header>
-        </Header>
-        <ScrollView 
-          style = {{
-            flex: 1
-          }}
-          contentContainerStyle={{
-            alignItems: 'center'
-          }}
-        >
-          <Text style = { styles.TitleTema }>Metabolismo</Text>
-          <Text style = { styles.Parrafo }>Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. </Text>
-          <View
-            style = { styles.ImageContainer }
-            >
-            <Image 
-              style = { styles.Image }
-              source = {{ uri: 'https://banner2.kisspng.com/20180603/xrf/kisspng-pepsin-molecule-enzyme-protein-digestion-5b1444f1a05f05.6198800115280550256569.jpg'}}
-              />
+      <ScrollView 
+        style = {{
+          flex: 1
+        }}
+        contentContainerStyle={{
+          alignItems: 'center'
+        }}
+      >
+        <Text style = { styles.TitleTema }>{this.state.tema.nombre}</Text>
+        { this.renderContenido() }
+        <View style = { styles.SeccionPregunta}>
+          <View style = { styles.SeccionPregunta__Header}>
+            <Text style = { styles.SeccionPregunta__Header__Title}>DESBLOQUEA LOS SIGUIENTES CURSOS:</Text>
+            <View style = { styles.SeccionPregunta__Header__Line}/>
           </View>
-          <Text style = { styles.Parrafo }>No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas "Letraset", las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.</Text>
-          <View style = { styles.SeccionPregunta}>
-            <View style = { styles.SeccionPregunta__Header}>
-              <Text style = { styles.SeccionPregunta__Header__Title}>DESBLOQUEA LOS SIGUIENTES CURSOS:</Text>
-              <View style = { styles.SeccionPregunta__Header__Line}/>
-            </View>
-            <Text style = { styles.SeccionPregunta__Pregunta}>¿Que es el metabolismo?</Text>
-            <View style = { styles.SeccionPregunta__Option}>
-              <View style = { styles.SeccionPregunta__Option__Circle}/>
-              <Text style = { styles.SeccionPregunta__Option__Text}>Es un hecho establecido hace demasiado tiempo que un lector</Text>
-            </View>
-            <View style = { styles.SeccionPregunta__Option}>
-              <View style = { styles.SeccionPregunta__Option__Circle}/>
-              <Text style = { styles.SeccionPregunta__Option__Text}>Es un hecho establecido hace demasiado tiempo que un lector</Text>
-            </View>
-            <View style = { styles.SeccionPregunta__Option}>
-              <View style = { styles.SeccionPregunta__Option__Circle}/>
-              <Text style = { styles.SeccionPregunta__Option__Text}>Es un hecho establecido hace demasiado tiempo que un lector</Text>
-            </View>
-            <View style = { styles.SeccionPregunta__Option}>
-              <View style = { styles.SeccionPregunta__Option__Circle}/>
-              <Text style = { styles.SeccionPregunta__Option__Text}>Es un hecho establecido hace demasiado tiempo que un lector</Text>
-            </View>
+          <Text style = { styles.SeccionPregunta__Pregunta}>¿Que es el metabolismo?</Text>
+          <View style = { styles.SeccionPregunta__Option}>
+            <View style = { styles.SeccionPregunta__Option__Circle}/>
+            <Text style = { styles.SeccionPregunta__Option__Text}>Es un hecho establecido hace demasiado tiempo que un lector</Text>
           </View>
-          <View style = { styles.Controls }>
-            <View style = { styles.Control}>
-              <Icon style = { styles.Control__Icon} name = 'chevron-left' type = 'FontAwesome'/>
-              <Text style = { styles.Control__Text} >anterior</Text>
-            </View>
-            <View style = { styles.Control }>
-              <Text style = { styles.Control__Text}>Alimentacion</Text>
-              <Icon style = { styles.Control__Icon } name = 'chevron-right' type = 'FontAwesome'/>
-            </View>
+          <View style = { styles.SeccionPregunta__Option}>
+            <View style = { styles.SeccionPregunta__Option__Circle}/>
+            <Text style = { styles.SeccionPregunta__Option__Text}>Es un hecho establecido hace demasiado tiempo que un lector</Text>
           </View>
-        </ScrollView>
-      </View>
+          <View style = { styles.SeccionPregunta__Option}>
+            <View style = { styles.SeccionPregunta__Option__Circle}/>
+            <Text style = { styles.SeccionPregunta__Option__Text}>Es un hecho establecido hace demasiado tiempo que un lector</Text>
+          </View>
+          <View style = { styles.SeccionPregunta__Option}>
+            <View style = { styles.SeccionPregunta__Option__Circle}/>
+            <Text style = { styles.SeccionPregunta__Option__Text}>Es un hecho establecido hace demasiado tiempo que un lector</Text>
+          </View>
+        </View>
+        
+        <Text style = { styles.Evaluar } onPress = { this.handleEvaluar }>Evaluar</Text>
+
+        <View style = { styles.Controls }>
+          <View style = { styles.Control}>
+            <Icon style = { styles.Control__Icon} name = 'chevron-left' type = 'FontAwesome'/>
+            <Text style = { styles.Control__Text} disabled = { this.handleDisabledAnterior() }  onPress = { this.handleAnterior } >anterior</Text>
+          </View>
+          <View style = { styles.Control }>
+            <Text style = { styles.Control__Text} disabled = { this.handleDisabledSiguiente() } onPress = { this.handleSiguiente }>Alimentacion</Text>
+            <Icon style = { styles.Control__Icon } name = 'chevron-right' type = 'FontAwesome'/>
+          </View>
+        </View>
+      </ScrollView>
+    
     )
   }
 }
@@ -79,7 +162,7 @@ const styles = StyleSheet.create({
     width: 300,
     marginTop: 28,
     lineHeight: 21,
-    textAlign: 'center',
+    textAlign: 'justify',
     fontFamily: FONTS.poiretOneRegular,
     fontSize: 14
   },
@@ -133,8 +216,13 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.poiretOneRegular,
     fontSize: 16
   },
+  Evaluar:{
+    marginTop: 32,
+    fontFamily: FONTS.hindSemiBold,
+    fontSize: 18,
+  },
   Controls:{
-    marginTop: 60,
+    marginTop: 32,
     width: 260,
     flexDirection: 'row',
     justifyContent: 'space-between',

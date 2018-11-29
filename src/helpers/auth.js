@@ -1,10 +1,11 @@
 import { AsyncStorage } from 'react-native'
 import base64 from 'base-64';
+import { urlServer } from '../config/config';
 
 const login = async (user) =>{
   console.log(user);
   try{
-    const resp = await fetch('http://192.168.1.104:4000/auth/login',{
+    const resp = await fetch(`${urlServer}/auth/login`,{
         method: 'POST',
         headers:{
           Accept: 'application/json',
@@ -46,7 +47,7 @@ const logOut = async () => {
 
 const register = async (user) => {
   try{
-    const resp = await fetch('http://192.168.1.104:4000/auth/register',{
+    const resp = await fetch(`${urlServer}/auth/register`,{
         method: 'POST',
         headers:{
           Accept: 'application/json',

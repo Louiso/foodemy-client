@@ -1,7 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View, Image, StyleSheet, ScrollView } from 'react-native'
-import { Header } from 'native-base'
-import { Constants } from 'expo'
+import { View, Image, StyleSheet, ScrollView } from 'react-native'
 
 import Section from '../../../components/Section';
 import { getCiclos } from '../../../helpers/ciclos';
@@ -12,7 +10,7 @@ export default class Cursos extends Component {
   }
   renderSections(){
     return this.state.ciclos.map((ciclo)=>{
-      return <Section  key = {ciclo._id} ciclo = { ciclo }/>
+      return <Section  key = {ciclo._id} ciclo = { ciclo } navigation = { this.props.navigation }/>
     });
   }
   componentDidMount = async () => {
@@ -24,7 +22,6 @@ export default class Cursos extends Component {
     }
   }
   render() {
-
     return (
       <ScrollView style = {{ flex: 1 }}>
         <View style = { styles.ImageContainer }>

@@ -1,5 +1,8 @@
+import { urlServer } from "../config/config";
+
 const getCiclos = async () => {
-  const resp = await fetch('http://192.168.1.104:4000/ciclo')
+
+  const resp = await fetch(`${urlServer}/ciclo`)
   const respJson = await resp.json();
   return respJson;
 }

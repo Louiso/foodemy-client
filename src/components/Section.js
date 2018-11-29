@@ -16,7 +16,7 @@ export default class Section extends Component {
           showsHorizontalScrollIndicator = { false }
           data = { ciclo.cursos }
           renderItem = {({ item })=>{
-            return (<Card curso = { item }/>)
+            return (<Card curso = { item } navigation = {this.props.navigation }/>)
           }}
         />
       </View>

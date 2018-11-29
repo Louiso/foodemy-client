@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
-import { View,  StyleSheet , ScrollView  } from 'react-native'
-import { Header } from 'native-base'
-import { Constants } from 'expo'
+import { ScrollView  } from 'react-native'
+
 import PostForm from '../../../components/Post/PostForm';
 import Post from '../../../components/Post/Post';
 
