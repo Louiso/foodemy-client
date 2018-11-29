@@ -142,8 +142,8 @@ export default class FormData extends Component {
               <View style = { styles.Line }/>
             </View>
           </View>
-          <Text style = { styles.Continuar}>continuar</Text>
-          <Text style = { styles.Login }>Tengo una cuenta</Text>
+          <Text style = { styles.Continuar} onPress = { this.props.goToRegister } >continuar</Text>
+          <Text style = { styles.Login } onPress = { this.props.goToLogin } >Tengo una cuenta</Text>
         </View>
       </View>
     )

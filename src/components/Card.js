@@ -1,30 +1,46 @@
 import React, { Component } from 'react'
-import { Text, View, StyleSheet , Image } from 'react-native'
+import { Text, View, StyleSheet , Image, TouchableOpacity } from 'react-native'
 import { FONTS } from '../helpers/FONTS'
 import { Icon } from 'native-base'
+import { getCurrentUser } from '../helpers/auth';
 
 export default class Card extends Component {
-  render() {
+  state = {
+    lock: true
+  }
+  componentDidMount = async () => {
     const { curso } = this.props;
+    const user = await getCurrentUser();
+    if(user.llaves >= curso.llaves){
+      this.setState({
+        lock: false
+      });
+    }
+  }
+  render(){
+    const { curso } = this.props;
+    console.log(curso);
     const colorIcon = { 
-      color: curso.bloqueado? 'red':'green'
+      color: this.state.lock? 'red':'green'
     };
-    const nameIcon = curso.bloqueado? 'lock': 'unlock' 
+    const nameIcon = this.state.lock? 'lock': 'unlock' 
     return (
       <View 
         style = { styles.Tema }
         >
-        <Image
-          style = { styles.TemaImage }
-          source = {{uri: 'http://mouse.latercera.com/wp-content/uploads/2018/08/Cells-900x600.jpg'}}
-        />
-        <View style = { styles.TemaFooter}>
-          <Text style = { styles.TemaTitle }>{curso.nombre}</Text>
-          <Icon 
-            name= { nameIcon } 
-            style = { [ styles.TemaIcon, colorIcon ]}
-            />
-        </View>
+        <TouchableOpacity onPress = { () => console.log(':v')}>
+          <Image
+            style = { styles.TemaImage }
+            source = {{uri: curso.urlImage}}
+          />
+          <View style = { styles.TemaFooter}>
+            <Text style = { styles.TemaTitle }>{curso.nombre}</Text>
+            <Icon 
+              name= { nameIcon } 
+              style = { [ styles.TemaIcon, colorIcon ]}
+              />
+          </View>
+        </TouchableOpacity>
       </View>
     )
   }

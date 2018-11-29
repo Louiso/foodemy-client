@@ -23,8 +23,8 @@ export default class PresentaMetabot extends Component {
               source = { { uri: 'https://i2.wp.com/www.unotaku.net/wp-content/uploads/2017/08/Watamote-8.gif?resize=631%2C352'}}/>
           </View>
           <Text style = {styles.Pregunta}>Te presento a MetaBot, tu compañero en el metabolismo</Text>
-          <Text style = { styles.Continuar}>continuar</Text>
-          <Text style = { styles.Login }>Tengo una cuenta</Text>
+          <Text style = { styles.Continuar} onPress = { () => this.props.onPress(this.props.index + 1)}>continuar</Text>
+          <Text style = { styles.Login } onPress = { this.props.goToLogin } >Tengo una cuenta</Text>
         </View>
       </View>
     )

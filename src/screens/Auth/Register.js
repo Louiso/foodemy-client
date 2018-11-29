@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
-import { Text, View, Image, StyleSheet , Animated , TouchableWithoutFeedback , Keyboard} from 'react-native'
+import { Text, View, StyleSheet , Animated , TouchableWithoutFeedback , Keyboard} from 'react-native'
 import Input from './Input';
 import { FONTS } from '../../helpers/FONTS';
+import { register } from '../../helpers/auth';
 
 const IMAGE_HEIGHT = 140;
 const IMAGE_HEIGHT_SMALL = 0;
@@ -66,14 +67,23 @@ export default class Register extends Component {
       [name]: value
     });
   }
-  handleSubmit = () => {
+  handleSubmit = async () => {
     const { username , email , password , confirmPassword } = this.state;
-    console.log({
-      username,
-      email,
-      password,
-      confirmPassword
-    });
+    try{
+      if(password !== confirmPassword) throw new Error('Contraseñas no coinciden')
+      const resp = await register({
+        username,
+        email,
+        password
+      })
+      if(resp.ok){
+        this.props.navigation.navigate('Inicio');
+      }else{
+        console.log(resp.message);
+      }
+    }catch(e){
+      console.log(e);
+    }
   }
   render() {
     return (
@@ -106,23 +116,26 @@ export default class Register extends Component {
                 name = 'email'
                 onChangeText = { this.handleChangeText }
                 value = { this.state.email }
+                keyboardType = 'email-address'
               />
               <Input
                 label = 'Contraseña'
                 name = 'password'
                 onChangeText = { this.handleChangeText }
                 value = { this.state.password }
+                secureTextEntry = { true }
               />
               <Input
                 label = 'Confirme Contraseña'
                 name = 'confirmPassword'
                 onChangeText = { this.handleChangeText }
                 value = { this.state.confirmPassword }
+                secureTextEntry = { true }
               />
             </View>
             <View>
               <Text style = { styles.Submit } onPress = { this.handleSubmit }>Crear Cuenta</Text>
-              <Text style = { styles.Login }>tengo cuenta</Text>
+              <Text style = { styles.Login } onPress = {() => this.props.navigation.navigate('Login')} >tengo cuenta</Text>
             </View>
           </View>
         </TouchableWithoutFeedback>

@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Text, View, Image, StyleSheet , Keyboard, TouchableWithoutFeedback , Animated} from 'react-native'
 import Input from './Input';
 import { FONTS } from '../../helpers/FONTS';
+import { login } from '../../helpers/auth';
 
 // function isNotVoid(value){
 //   return value !== ''
@@ -11,7 +12,7 @@ const IMAGE_HEIGHT = 140;
 const IMAGE_HEIGHT_SMALL = 0;
 export default class Login extends Component {
   state = {
-    username: '',
+    email: '',
     password: '',
     keyboardHeight : new Animated.Value(0),
     imageHeight: new Animated.Value(IMAGE_HEIGHT)
@@ -57,15 +58,18 @@ export default class Login extends Component {
       [name]: value
     });
   }
-  handleSubmit = () => {
-    const { username, password } = this.state;
-    /* enviar al servidor */
-    /* fetch..... */
-    /* obtener la respuesta ... si es ok 
-      guardar la data en la localstorage
-      tanto el user como el token
-      pasar a la siguiente screen */
-    /* sino mostrar mensaje de error del servidor */
+  handleSubmit = async () => {
+    const { email, password } = this.state;
+    const resp = await login({
+      email,
+      password
+    });
+    console.log(resp);
+    if(resp.ok){
+      this.props.navigation.navigate('Inicio');
+    }else{
+      console.log(resp.message);
+    }
   }
   render() {
     return (
@@ -88,21 +92,22 @@ export default class Login extends Component {
             </View>
             <View style = {styles.Form}>
               <Input
-                label = 'Nombre de usuario'
-                value = { this.state.username }
-                name = 'username'
+                label = 'Correo Electronico'
+                value = { this.state.email }
+                name = 'email'
                 onChangeText = { this.handleChangeText } 
                 />
               <Input
                 label = 'Contraseña'
                 value = { this.state.password }
                 name = 'password'
+                secureTextEntry = { true } 
                 onChangeText = { this.handleChangeText }
               />
             </View>
             <View>
               <Text style = { styles.Submit } onPress = { this.handleSubmit }>Iniciar Sesion</Text>
-              <Text style = { styles.Register }>Registrarse</Text>
+              <Text style = { styles.Register} onPress = { () => this.props.navigation.navigate('Register')}>Registrarse</Text>
             </View>
           </View>
         </TouchableWithoutFeedback>

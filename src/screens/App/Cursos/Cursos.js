@@ -4,90 +4,36 @@ import { Header } from 'native-base'
 import { Constants } from 'expo'
 
 import Section from '../../../components/Section';
-
-const Ciclos = [
-  {
-    key: '1',
-    nombre: 'Basico',
-    cursos: [
-      {
-        key: '1',
-        nombre: 'Conceptos',
-        bloqueado: false,
-        temas:[
-          {
-            key: '1',
-            nombre: 'Metabolismo'
-          },
-          {
-            key: '2',
-            nombre: 'Curiosidades'
-          }
-        ]
-      },
-      {
-        key: '2',
-        nombre: 'Consideraciones',
-        bloqueado: true,
-        temas:[
-          {
-            key: '1',
-            nombre: 'Metabolismo'
-          },
-          {
-            key: '2',
-            nombre: 'Curiosidades'
-          }
-        ]
-      }
-    ]
-  },
-  {
-    key: '2',
-    nombre: 'Intermedio',
-    cursos: [
-      {
-        key: '1',
-        nombre: 'Conceptos',
-        bloqueado: true,
-        temas:[
-          {
-            key: '1',
-            nombre: 'Metabolismo'
-          },
-          {
-            key: '2',
-            nombre: 'Curiosidades'
-          }
-        ]
-      }
-    ]
-  }
-
-]
+import { getCiclos } from '../../../helpers/ciclos';
 
 export default class Cursos extends Component {
+  state = {
+    ciclos: []
+  }
   renderSections(){
-    return Ciclos.map((ciclo)=>{
-      return <Section  key = {ciclo.key} ciclo = { ciclo }/>
+    return this.state.ciclos.map((ciclo)=>{
+      return <Section  key = {ciclo._id} ciclo = { ciclo }/>
     });
   }
+  componentDidMount = async () => {
+    const resp = await getCiclos();
+    if(resp.ok){
+      this.setState({
+        ciclos: resp.ciclos
+      });
+    }
+  }
   render() {
+
     return (
-      <View style = {{ flex: 1}}>
-        <View style ={{ height: Constants.statusBarHeight }}/>
-        <Header>
-        </Header>
-        <ScrollView style = {{ flex: 1 }}>
-          <View style = { styles.ImageContainer }>
-            <Image 
-              style = { styles.Image }
-              source = {{uri: 'https://ae01.alicdn.com/kf/HTB1xolnIXXXXXbvXpXXq6xXFXXXK/Watamote-Tomoko-Kuroki-Cosplay-Pelo-Negro-Peluca.jpg'}}/>
-          </View>
-          { this.renderSections() }
-        </ScrollView>
-        
-      </View>
+      <ScrollView style = {{ flex: 1 }}>
+        <View style = { styles.ImageContainer }>
+          <Image 
+            style = { styles.Image }
+            source = {{uri: 'https://ae01.alicdn.com/kf/HTB1xolnIXXXXXbvXpXXq6xXFXXXK/Watamote-Tomoko-Kuroki-Cosplay-Pelo-Negro-Peluca.jpg'}}/>
+        </View>
+        { this.renderSections() }
+      </ScrollView>
     )
   }
 }

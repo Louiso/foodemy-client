@@ -49,7 +49,10 @@ export default class Input extends Component {
           value = { value }
           onChangeText = { (value) => onChangeText(value, name)}
           onFocus = { this.handleFocus}
-          onBlur = {this.handleBlur}/>
+          onBlur = {this.handleBlur}
+          keyboardType = { this.props.keyboardType ? this.props.keyboardType : 'default'}
+          secureTextEntry = { this.props.secureTextEntry}
+          />
         <View style = { styles.Line}/>
         <Text style = { styles.Error }>{ this.isValido() }</Text>
       </View>

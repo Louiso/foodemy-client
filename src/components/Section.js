@@ -12,6 +12,7 @@ export default class Section extends Component {
         <FlatList
           style = { styles.FlatList}
           horizontal = { true}
+          keyExtractor = { (item) => item._id }
           showsHorizontalScrollIndicator = { false }
           data = { ciclo.cursos }
           renderItem = {({ item })=>{
