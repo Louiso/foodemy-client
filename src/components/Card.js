@@ -4,23 +4,39 @@ import { FONTS } from '../helpers/FONTS'
 import { Icon } from 'native-base'
 import { getCurrentUser } from '../helpers/auth';
 import { getSubscripcion, postSubscripcion } from '../helpers/subscription';
+import { getUser } from '../helpers/user';
 
 export default class Card extends Component {
   state = {
     lock: true
   }
-  componentDidMount = async () => {
-    const { curso } = this.props;
-    const user = await getCurrentUser();
-    if(user.llaves >= curso.llaves){
-      this.setState({
-        lock: false
-      });
+  comparar = async () => {
+    try{
+      const { curso } = this.props;
+      const _user = await getCurrentUser();
+      const { user } = await getUser(_user._id);
+      if(user.llaves >= curso.llaves){
+        this.setState({
+          lock: false
+        });
+      }
+    }catch(e){
+      console.log(e);
     }
+  }
+  componentDidMount = async () => {
+    this.timer = setInterval(()=>{
+      this.comparar();
+    },5000);
+    this.comparar();
+  }
+  componentWillUnmount = async () => {
+    clearInterval(this.timer);
   }
   ingresarCurso = async () => {
     try{
-      const user = await getCurrentUser();
+      const _user = await getCurrentUser();
+      const { user } = await getUser(_user._id);
       const { curso } = this.props;
       /* Aqui debo crear una subscripcion ... pero antes buscar si existe dicha subscripcion antes */
       const _idUser = user._id;

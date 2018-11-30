@@ -1,22 +1,11 @@
-import React, { Component } from 'react'
-import { Text } from 'react-native'
 import { createDrawerNavigator } from 'react-navigation'
-import { logOut } from '../../helpers/auth';
-import Inicio from './Inicio';
 
-class LogOut extends Component{
-  componentDidMount = async () => {
-    await logOut();
-    this.props.navigation.navigate('Login');
-  }
-  render(){
-    return(
-      <Text>Loading...</Text>
-    );
-  }
-}
+import Inicio from './Inicio';
+import Profile from './Profile';
+import LogOut from './LogOut';
 
 export default createDrawerNavigator({
   Inicio: Inicio,
+  Profile: Profile,
   LogOut: LogOut
 });

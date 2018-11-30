@@ -3,81 +3,67 @@ import base64 from 'base-64';
 import { urlServer } from '../config/config';
 
 const login = async (user) =>{
-  console.log(user);
-  try{
-    const resp = await fetch(`${urlServer}/auth/login`,{
-        method: 'POST',
-        headers:{
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          email: user.email,
-          password: user.password
-        })
+  console.log('HELPERS/AUTH',user);
+  const resp = await fetch(`${urlServer}/auth/login`,{
+      method: 'POST',
+      headers:{
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: user.email,
+        password: user.password
       })
-    const respJson = await resp.json()
-    console.log(respJson)
-    if(respJson.ok){
-      await AsyncStorage.setItem('token', respJson.token)
-      return {
-        ok: true,
-        message: 'Login Completado'
-      }
-    }else{
-      return {
-        ok: false,
-        message: respJson.err
-      }
+    })
+  const respJson = await resp.json()
+  console.log('HELPERS/AUTH',respJson)
+  if(respJson.ok){
+    await AsyncStorage.setItem('token', respJson.token)
+    return {
+      ok: true,
+      message: 'Login Completado'
     }
-    
-  }catch(e){
-    console.log(e);
+  }else{
+    return {
+      ok: false,
+      message: respJson.err
+    }
   }
-  
 }
 
 const logOut = async () => {
-  try{
-    await AsyncStorage.removeItem('token');
-  }catch(e){
-    console.log(e);
-  }
+  await AsyncStorage.removeItem('token');
 }
 
 const register = async (user) => {
-  try{
-    const resp = await fetch(`${urlServer}/auth/register`,{
-        method: 'POST',
-        headers:{
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          username: user.username,
-          email: user.email,
-          password: user.password
-        })
-      })
-
-    const respJson = await resp.json();
-    
-    if(respJson.ok){
-      await AsyncStorage.setItem('token', respJson.token)
-      return {
-        ok: true,
-        message: 'Registro Completado'
-      }
-    }else{
-      return {
-        ok: false,
-        message: resp.err
-      }
-    }
-  }catch(e){
-    console.log(e);
-  }
   
+  const resp = await fetch(`${urlServer}/auth/register`,{
+      method: 'POST',
+      headers:{
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        username: user.username,
+        email: user.email,
+        password: user.password
+      })
+    })
+
+  const respJson = await resp.json();
+  
+  if(respJson.ok){
+    await AsyncStorage.setItem('token', respJson.token)
+    return {
+      ok: true,
+      message: 'Registro Completado'
+    }
+  }else{
+    return {
+      ok: false,
+      message: resp.err
+    }
+  }
 }
 const getCurrentUser = async () => {
   const token = await AsyncStorage.getItem('token');
