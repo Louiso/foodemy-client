@@ -34,7 +34,7 @@ export default createMaterialTopTabNavigator({
     }
   }
 },{
-  initialRouteName: 'Cursos',
+  initialRouteName: 'Muro',
   tabBarPosition: 'bottom',
   tabBarOptions:{
     activeTintColor: 'orange',

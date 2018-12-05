@@ -7,10 +7,13 @@ import { getCurrentUser } from '../../../helpers/auth';
 import { getSubscripcion, updateTemaActual } from '../../../helpers/subscription';
 import { getEvaluacion, postEvaluacion , updateRespuestaEvaluacion } from '../../../helpers/evaluacion';
 import { updateLlavesUser } from '../../../helpers/user';
+import { getDataTema } from '../../../services/tema.services';
 
 export default class Tema extends Component {
   state = {
     tema: null,
+    nameTemaAnterior: '',
+    nameTemaSiguiente: '',
     opcionSelected: null,
     evaluado: false,
     correcto: false
@@ -20,7 +23,23 @@ export default class Tema extends Component {
     try{
       const index = this.props.navigation.getParam('index','No-INDEX');
       const curso = this.props.navigation.getParam('curso','No-Curso');
+      // const dataTema = await getDataTema(index, curso)
+      // console.log(dataTema);
       const _idTemaActual = curso.temas[index]
+      let nameTemaAnterior = '';
+      if(index !== 0){
+        const _idTemaAnterior = curso.temas[index-1]
+        const resp = await getTema(_idTemaAnterior);
+        if(!resp.ok) throw 'No se pudo obtener tema anterior'
+        nameTemaAnterior = resp.tema.nombre;
+      } 
+      let nameTemaSiguiente = '';
+      if(index < curso.temas.length){
+        const _idTemaSiguiente = curso.temas[index + 1]
+        const resp = await getTema(_idTemaSiguiente);
+        if(!resp.ok) throw 'No se pudo obtener tema siguiente'
+        nameTemaSiguiente = resp.tema.nombre
+      }
       const resp = await getTema(_idTemaActual);
       const user = await getCurrentUser();
       const respSubs = await getSubscripcion(user._id,curso._id);
@@ -45,7 +64,9 @@ export default class Tema extends Component {
         tema: tema,
         evaluado: evaluado,
         opcionSelected: opcionSelected,
-        correcto: correcto
+        correcto: correcto,
+        nameTemaAnterior,
+        nameTemaSiguiente
       });
     }catch(e){
       console.log(e);
@@ -225,12 +246,17 @@ export default class Tema extends Component {
         { this.renderSectionPreguntas() }
         
         <View style = { styles.Controls }>
-          <View style = { styles.Control}>
-            <Icon style = { styles.Control__Icon} name = 'chevron-left' type = 'FontAwesome'/>
-            <Text style = { styles.Control__Text} disabled = { this.handleDisabledAnterior() }  onPress = { this.handleAnterior } >anterior</Text>
-          </View>
+          {
+            this.props.navigation.getParam('index','No-INDEX') === 0 ? <Text></Text>:(
+              <View style = { styles.Control}>
+                <Icon style = { styles.Control__Icon} name = 'chevron-left' type = 'FontAwesome'/>
+                <Text style = { styles.Control__Text} disabled = { this.handleDisabledAnterior() }  onPress = { this.handleAnterior } >{this.state.nameTemaAnterior}</Text>
+              </View>
+            )
+          }
+          
           <View style = { styles.Control }>
-            <Text style = { styles.Control__Text} disabled = { this.handleDisabledSiguiente() } onPress = { this.handleSiguiente }>Alimentacion</Text>
+            <Text style = { styles.Control__Text} disabled = { this.handleDisabledSiguiente() } onPress = { this.handleSiguiente }>{this.state.nameTemaSiguiente}</Text>
             <Icon style = { styles.Control__Icon } name = 'chevron-right' type = 'FontAwesome'/>
           </View>
         </View>

@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { Text } from 'react-native';
 import PreguntaDieta from './src/screens/Intro/PreguntaDieta';
 import PreguntaEsfuerzo from './src/screens/Intro/PreguntaEsfuerzo';
 import PresentaMetabot from './src/screens/Intro/PresentaMetabot';
@@ -12,9 +12,20 @@ import Social from './src/screens/App/Social/Social';
 import Muro from './src/screens/App/Muro/Muro';
 
 import Routes from './src/routes/index'
+import { loadFonts } from './src/helpers/loader';
 
 export default class App extends React.Component {
+/*   state = {
+    ready: false
+  }
+  componentDidMount = async () => {
+    await loadFonts()
+    this.setState({
+      ready: true
+    })
+  } */
   render() {
+    /* if(!this.state.ready) return <Text>Loading...</Text> */
     return (
       <Routes/>
     );

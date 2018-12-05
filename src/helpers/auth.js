@@ -72,9 +72,15 @@ const getCurrentUser = async () => {
   decodedToken = JSON.parse(decodedToken);
   return decodedToken.user;
 }
+
+const getToken = async () => {
+  const token = await AsyncStorage.getItem('token');
+  return token;
+}
 export {
   login,
   register,
   logOut,
-  getCurrentUser
+  getCurrentUser,
+  getToken
 }

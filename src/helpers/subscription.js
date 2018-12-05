@@ -7,6 +7,12 @@ const getSubscripcion = async (_idUser, _idCurso) => {
   return respJson;
 }
 
+const getSubscripcions = async(_idUser) => {
+  const resp = await fetch(`${urlServer}/subscripcion/${_idUser}`)
+  const respJson = await resp.json();
+  return respJson;
+}
+
 const postSubscripcion = async (_idUser, _idCurso ) => {
   const resp = await fetch(`${urlServer}/subscripcion`,{
     method: 'POST',
@@ -45,5 +51,6 @@ const updateTemaActual = async (_idSubscripcion, index) => {
 export {
   getSubscripcion,
   postSubscripcion,
-  updateTemaActual
+  updateTemaActual,
+  getSubscripcions
 }
