@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "client",
-    "description": "This project is really great.",
+    "name": "Foodemy",
+    "description": "Come sano",
     "slug": "client",
     "privacy": "public",
     "sdkVersion": "31.0.0",
@@ -22,6 +22,9 @@
     ],
     "ios": {
       "supportsTablet": true
+    },
+    "android": {
+      "package": "com.LuisCompany.Foodemy"
     }
   }
 }

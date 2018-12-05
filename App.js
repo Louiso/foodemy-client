@@ -1,5 +1,4 @@
 import React from 'react';
-import { Text} from 'react-native';
 
 import PreguntaDieta from './src/screens/Intro/PreguntaDieta';
 import PreguntaEsfuerzo from './src/screens/Intro/PreguntaEsfuerzo';
