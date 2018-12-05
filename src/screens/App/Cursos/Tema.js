@@ -4,7 +4,7 @@ import { Icon } from 'native-base'
 import { FONTS } from '../../../helpers/FONTS';
 import { getTema } from '../../../helpers/tema';
 import { getCurrentUser } from '../../../helpers/auth';
-import { getSubscripcion, updateTemaActual } from '../../../helpers/subscription';
+import { getSubscripcion, updateTemaActual, updateLlavesObtenidas } from '../../../helpers/subscription';
 import { getEvaluacion, postEvaluacion , updateRespuestaEvaluacion } from '../../../helpers/evaluacion';
 import { updateLlavesUser } from '../../../helpers/user';
 import { getDataTema } from '../../../services/tema.services';
@@ -157,6 +157,7 @@ export default class Tema extends Component {
         correcto = true;
         console.log('Premio',respTema.tema.prueba.premio);
         const newUser = await updateLlavesUser(user._id, respTema.tema.prueba.premio);
+        const newSubscripcion = await updateLlavesObtenidas(respSubs.subscripcion._id, respSubs.subscripcion.llavesObtenidas + respTema.tema.prueba.premio)
       }
       this.setState({
         evaluado: true,

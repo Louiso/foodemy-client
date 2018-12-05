@@ -48,9 +48,25 @@ const updateTemaActual = async (_idSubscripcion, index) => {
   }
 }
 
+const updateLlavesObtenidas = async (_idSubscripcion, llavesObtenidas) => {
+  const resp = await fetch(`${urlServer}/subscripcion/llavesObtenidas/${_idSubscripcion}`,{
+    method: 'PUT',
+    headers:{
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      llavesObtenidas: llavesObtenidas
+    })
+  })
+  const respJson = await resp.json();
+  return respJson;
+}
+
 export {
   getSubscripcion,
   postSubscripcion,
   updateTemaActual,
-  getSubscripcions
+  getSubscripcions,
+  updateLlavesObtenidas
 }

@@ -12,15 +12,19 @@ export default class Item extends Component {
   componentDidMount = async () => {
     const { subscripcion } = this.props;
     const cursoResp = await getCurso(subscripcion._idCurso)
-    console.log(cursoResp);
+    const { curso } = cursoResp;
+    this.setState({
+      curso: curso
+    })
   }
   render() {
+    const { curso } = this.state;
+    if(!curso) return (<Text>Loading ...</Text>)
     const { subscripcion } = this.props;
-    const curso = {
-      nombre: 'Conceptos I',
-      temas: [
-        '141431','Metabolismo','1131121','1321321321']
-    }
+    let llavesTotales = 0;
+    curso.temas.forEach(tema => {
+      llavesTotales += tema.prueba.premio;
+    });
     const rateTema = Math.floor(subscripcion.temaActual / curso.temas.length * 100);
     // 228
     const widthBarra = {
@@ -40,16 +44,16 @@ export default class Item extends Component {
       }}>
         <View style = { styles.Item}>
           <Image style = { styles.Item__Image} source = {{
-            uri: 'http://as01.epimg.net/epik/imagenes/2018/04/28/portada/1524913221_572475_1524913364_noticia_normal.jpg'
+            uri: curso.urlImage
           }}/>
           <View style = { styles.Item__Body}>
             <View style = { styles.Item__Body__Head}>
               <View style = { styles.Item__Body__Head__CursoInfo}>
                 <Text style = { styles.Item__Body__Head__CursoInfo__Name}>{curso.nombre}</Text>
-                <Text style = { styles.Item__Body__Head__CursoInfo__Tema}>Tema Actual: {curso.temas[subscripcion.temaActual]}</Text>
+                <Text style = { styles.Item__Body__Head__CursoInfo__Tema}>Tema Actual: {curso.temas[subscripcion.temaActual].nombre}</Text>
               </View>
               <View style = { styles.Item__Body__Head__StatLlaves }>
-                <Text style = { styles.Item__Body__Head__StatLlaves__LLaves}>{subscripcion.llavesObtenidas}/{subscripcion.llavesTotales}</Text>
+                <Text style = { styles.Item__Body__Head__StatLlaves__LLaves}>{subscripcion.llavesObtenidas}/{llavesTotales}</Text>
                 <Icon style = { styles.Item__Body__Head__StatLlaves__Icon} name = "key"/>
               </View>
             </View>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View , StyleSheet } from 'react-native'
+import { Text, View , StyleSheet , ScrollView } from 'react-native'
 import Item from '../../../components/Item';
 import { getCurrentUser } from '../../../helpers/auth';
 import { getSubscripcions } from '../../../helpers/subscription';
@@ -33,24 +33,10 @@ export default class Muro extends Component {
     })
   }
   render() {
-
-    /* Obtener las subscripciones obtenidos por el usuario
-      me retornara un array, obtendria el _idCurso de cada curso, ademas del indice ... esta data es necesaria
-      para poder enviar a Tema ... cuando se realize un click sobre ellos
-    */
-
-    const subscripcion = {
-      _idUser: '12434',
-      _idCurso: '113431',
-      temaActual: 1,
-      date: 'Sera',
-      llavesObtenidas: 6,
-      llavesTotales: 20
-    }
     return (
-      <View style = { styles.Muro }>
+      <ScrollView style = { styles.Muro }>
         { this.renderItems() }
-      </View>
+      </ScrollView>
     )
   }
 }
@@ -59,6 +45,6 @@ export default class Muro extends Component {
 const styles = StyleSheet.create({
   Muro: {
     flex: 1,
-    justifyContent : 'center'
+    paddingTop: 24
   }
 })

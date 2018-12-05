@@ -1,12 +1,17 @@
 import React, { Component } from 'react'
-import { View, Image, StyleSheet, ScrollView } from 'react-native'
+import { View, Text , StyleSheet, ScrollView } from 'react-native'
 
 import Section from '../../../components/Section';
 import { getCiclos } from '../../../helpers/ciclos';
+import { getCurrentUser } from '../../../helpers/auth';
+import { FONTS } from '../../../helpers/FONTS';
+
+import { Icon } from 'native-base';
 
 export default class Cursos extends Component {
   state = {
-    ciclos: []
+    ciclos: [],
+    user: null
   }
   renderSections(){
     return this.state.ciclos.map((ciclo)=>{
@@ -14,10 +19,12 @@ export default class Cursos extends Component {
     });
   }
   componentDidMount = async () => {
+    const user = await getCurrentUser();
     const resp = await getCiclos();
     if(resp.ok){
       this.setState({
-        ciclos: resp.ciclos
+        ciclos: resp.ciclos,
+        user:user
       });
     }
   }
@@ -25,9 +32,8 @@ export default class Cursos extends Component {
     return (
       <ScrollView style = {{ flex: 1 }}>
         <View style = { styles.ImageContainer }>
-          <Image 
-            style = { styles.Image }
-            source = {{uri: 'https://ae01.alicdn.com/kf/HTB1xolnIXXXXXbvXpXXq6xXFXXXK/Watamote-Tomoko-Kuroki-Cosplay-Pelo-Negro-Peluca.jpg'}}/>
+          <Text style = { styles.Llaves }>{ this.state.user?this.state.user.llaves: 0} </Text>
+          <Icon style = { styles.Icon } name='key'/>
         </View>
         { this.renderSections() }
       </ScrollView>
@@ -37,11 +43,17 @@ export default class Cursos extends Component {
 
 const styles = StyleSheet.create({
   ImageContainer:{
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     marginTop: 38
   },
-  Image: { 
-    width: 140,
-    height: 140
+  Llaves:{
+    fontFamily: FONTS.hindBold,
+    fontSize: 48
+  },
+  Icon:{
+    fontSize: 48
   }
+
 })

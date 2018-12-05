@@ -38,7 +38,7 @@ export default class Card extends Component {
       const _user = await getCurrentUser();
       const { user } = await getUser(_user._id);
       const { curso } = this.props;
-      /* Aqui debo crear una subscripcion ... pero antes buscar si existe dicha subscripcion antes */
+      
       const _idUser = user._id;
       const _idCurso = curso._id;
       const resp = await getSubscripcion(_idUser,_idCurso);
