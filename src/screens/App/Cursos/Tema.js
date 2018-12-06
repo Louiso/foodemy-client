@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View,  StyleSheet , Image , ScrollView} from 'react-native'
+import { Text, View,  StyleSheet , Image , ScrollView, Animated } from 'react-native'
 import { Icon } from 'native-base'
 import { FONTS } from '../../../helpers/FONTS';
 import { getTema } from '../../../helpers/tema';
@@ -7,7 +7,6 @@ import { getCurrentUser } from '../../../helpers/auth';
 import { getSubscripcion, updateTemaActual, updateLlavesObtenidas } from '../../../helpers/subscription';
 import { getEvaluacion, postEvaluacion , updateRespuestaEvaluacion } from '../../../helpers/evaluacion';
 import { updateLlavesUser, getUser } from '../../../helpers/user';
-import { getDataTema } from '../../../services/tema.services';
 
 export default class Tema extends Component {
   state = {
@@ -16,7 +15,8 @@ export default class Tema extends Component {
     nameTemaSiguiente: '',
     opcionSelected: null,
     evaluado: false,
-    correcto: false
+    correcto: false,
+    animacion: new Animated.Value(0)
   }
   componentDidMount = async () => {
     
@@ -25,25 +25,24 @@ export default class Tema extends Component {
       const curso = this.props.navigation.getParam('curso','No-Curso');
       // const dataTema = await getDataTema(index, curso)
       // console.log(dataTema);
-      const _idTemaActual = curso.temas[index]
+      const _idTemaActual = this.getIndexTema(curso,index)
       let nameTemaAnterior = '';
       if(index !== 0){
-        const _idTemaAnterior = curso.temas[index-1]
+        const _idTemaAnterior = this.getIndexTema(curso,index-1)
         const resp = await getTema(_idTemaAnterior);
-        if(!resp.ok) throw 'No se pudo obtener tema anterior'
-        nameTemaAnterior = resp.tema.nombre;
+        nameTemaAnterior = resp.tema?resp.tema.nombre: '';
       } 
       let nameTemaSiguiente = '';
       if(index < curso.temas.length){
-        const _idTemaSiguiente = curso.temas[index + 1]
+        const _idTemaSiguiente = this.getIndexTema(curso,index+1)
         const resp = await getTema(_idTemaSiguiente);
-        if(!resp.ok) throw 'No se pudo obtener tema siguiente'
-        nameTemaSiguiente = resp.tema.nombre
+        nameTemaSiguiente = resp.tema?resp.tema.nombre:''
       }
       const resp = await getTema(_idTemaActual);
+      console.log(resp);
       const user = await getCurrentUser();
       const respSubs = await getSubscripcion(user._id,curso._id);
-      const respEval = await getEvaluacion(respSubs.subscripcion._id, curso.temas[index]);
+      const respEval = await getEvaluacion(respSubs.subscripcion._id, _idTemaActual);
       
       let evaluado = false; 
       let opcionSelected = null;
@@ -60,6 +59,7 @@ export default class Tema extends Component {
           correcto = true;
         }
       }
+      console.log(tema)
       this.setState({
         tema: tema,
         evaluado: evaluado,
@@ -115,6 +115,35 @@ export default class Tema extends Component {
       console.log('ERROR',e);
     }
   }
+  animarRespuesta = (correcto) => {
+    this.setState({
+      correcto: correcto
+    })
+    Animated.spring(
+      this.state.animacion,{
+        toValue: 50,
+        duration: 1500
+      }
+    ).start((animacion)=>{
+      if(animacion.finished){
+        Animated.timing(
+          this.state.animacion,{
+            toValue: 100,
+            duration: 1000,
+            delay: 500
+          }
+        ).start((animacion)=>{
+          if(animacion.finished){
+            this.setState({
+              evaluado: true,
+              animacion: new Animated.Value(0)
+            });
+          }
+        })
+      }
+    })
+    
+  }
   handleSiguiente = async () => {
     const curso = this.props.navigation.getParam('curso','No-Curso');
     const index = this.props.navigation.getParam('index','No-INDEX');
@@ -140,46 +169,35 @@ export default class Tema extends Component {
       console.log('ERROR',e);
     }
   }
+  getIndexTema = (curso, index) => {
+    if(curso.temas[index]._id){
+      return curso.temas[index]._id
+    }else{
+      return curso.temas[index]
+    }
+  }
   handleEvaluar = async () => {
     if(this.state.opcionSelected === null) return console.log('No selecciono nada');
     const curso = this.props.navigation.getParam('curso','No-Curso');
+
     const _user = await getCurrentUser();
     const { user } = await getUser(_user._id);
     const respSubs = await getSubscripcion(user._id,curso._id);
     const index = this.props.navigation.getParam('index','No-INDEX');
-    const respEval = await getEvaluacion(respSubs.subscripcion._id, curso.temas[index]);
+    let _idTema = this.getIndexTema();
+    const respEval = await getEvaluacion(respSubs.subscripcion._id, _idTema);
+    /* Si no se tiene evaluacion entonces evaluar */
     if(!respEval.ok){
-      /* CREAR EVALUACION */
-      console.log(':v');
-      const newRespEval = await postEvaluacion(respSubs.subscripcion._id, curso.temas[index], this.state.opcionSelected );
-      const respTema = await getTema(curso.temas[index]);
+      const newRespEval = await postEvaluacion(respSubs.subscripcion._id, _idTema, this.state.opcionSelected );
+      const respTema = await getTema(_idTema);
       let correcto = false;
       if(newRespEval.evaluacion.respuesta === respTema.tema.prueba.indexCorrecta){
         correcto = true;
-        console.log('Premio',respTema.tema.prueba.premio);
         const newUser = await updateLlavesUser(user._id, user.llaves + respTema.tema.prueba.premio);
         const newSubscripcion = await updateLlavesObtenidas(respSubs.subscripcion._id, respSubs.subscripcion.llavesObtenidas + respTema.tema.prueba.premio)
       }
-      this.setState({
-        evaluado: true,
-        correcto: correcto
-      });
-
+      this.animarRespuesta(correcto)
       
-    }else{
-      const respEval = await getEvaluacion(respSubs.subscripcion._id, curso.temas[index]);
-      const respTema = await getTema(curso.temas[index]);
-      const updateRespEval = await updateRespuestaEvaluacion(respEval.evaluacion._id, this.state.opcionSelected )
-      let correcto = false;
-      console.log(this.state.opcionSelected);
-      console.log(updateRespEval.evaluacion.respuesta, respTema.tema.prueba.indexCorrecta);
-      if( updateRespEval.evaluacion.respuesta === respTema.tema.prueba.indexCorrecta){
-        correcto = true;
-      }
-      this.setState({
-        evaluado: true,
-        correcto: correcto
-      })
     }
   }
   renderOptions = (opciones) => {
@@ -219,8 +237,14 @@ export default class Tema extends Component {
       }
       return (
         <View style = { styles.SeccionPregunta__Option} key = { index }>
-          <View style = { [styles.SeccionPregunta__Option__Circle, Option__Circle__Extra ]}/>
-          <Text style = { [styles.SeccionPregunta__Option__Text, Option__Text__Extra ]} onPress = { () => this.setState({ opcionSelected: index, evaluado: false })}>{opcion}</Text>
+          <View 
+            style = { [styles.SeccionPregunta__Option__Circle, Option__Circle__Extra ]}/>
+          <Text 
+            style = { [styles.SeccionPregunta__Option__Text, Option__Text__Extra ]} 
+            onPress = { () => this.setState({ opcionSelected: index, evaluado: false })}
+            disabled = { this.state.evaluado }
+            >{opcion}
+          </Text>
         </View>
       );
     });
@@ -232,12 +256,20 @@ export default class Tema extends Component {
     return (
       <View style = { styles.SeccionPregunta }>
         <View style = { styles.SeccionPregunta__Header}>
-          <Text style = { styles.SeccionPregunta__Header__Title}>DESBLOQUEA LOS SIGUIENTES CURSOS:</Text>
+          <Text style = { styles.SeccionPregunta__Header__Title}>
+            DESBLOQUEA { this.state.tema? this.state.tema.prueba.premio: '0'}</Text>
+          <Icon name='key' style = {{ fontSize: 20}}/>
+          <Text style = { styles.SeccionPregunta__Header__Title}> :</Text>
           <View style = { styles.SeccionPregunta__Header__Line}/>
         </View>
         <Text style = { styles.SeccionPregunta__Pregunta}>{prueba.pregunta}</Text>
         { this.renderOptions(prueba.opciones) }
-        <Text style = { styles.Evaluar } onPress = { this.handleEvaluar }>Evaluar</Text>
+        <Text 
+          style = { [styles.Evaluar, this.state.evaluado? {color: '#aaaaaaaa'}:{}] } 
+          onPress = { this.handleEvaluar } 
+          disabled = { this.state.evaluado }
+          >{ this.state.evaluado?'Evaluado':'Evaluar'}
+        </Text>
       </View>
     )
   }
@@ -245,6 +277,14 @@ export default class Tema extends Component {
     if(!this.state.tema){
       return <Text>Loading...</Text>
     }
+    const right = this.state.animacion.interpolate({
+      inputRange: [ 0, 50 ,  100],
+      outputRange: [ -100, 130 , 460]
+    })
+    const bottom = this.state.animacion.interpolate({
+      inputRange: [0, 50, 100],
+      outputRange: [ 300, 200, 300 ]
+    })
     return (
       <ScrollView 
         style = {{
@@ -263,16 +303,74 @@ export default class Tema extends Component {
             this.props.navigation.getParam('index','No-INDEX') === 0 ? <Text></Text>:(
               <View style = { styles.Control}>
                 <Icon style = { styles.Control__Icon} name = 'chevron-left' type = 'FontAwesome'/>
-                <Text style = { styles.Control__Text} disabled = { this.handleDisabledAnterior() }  onPress = { this.handleAnterior } >{this.state.nameTemaAnterior}</Text>
+                <Text 
+                  style = { styles.Control__Text} 
+                  disabled = { this.handleDisabledAnterior() }  
+                  onPress = { this.handleAnterior } >
+                  {this.state.nameTemaAnterior}
+                </Text>
               </View>
             )
           }
-          
-          <View style = { styles.Control }>
-            <Text style = { styles.Control__Text} disabled = { this.handleDisabledSiguiente() } onPress = { this.handleSiguiente }>{this.state.nameTemaSiguiente}</Text>
-            <Icon style = { styles.Control__Icon } name = 'chevron-right' type = 'FontAwesome'/>
-          </View>
+          {this.state.nameTemaSiguiente!==''? (
+            <View style = { styles.Control }>
+              <Text 
+                style = { styles.Control__Text} 
+                disabled = { this.handleDisabledSiguiente() } 
+                onPress = { this.handleSiguiente }>
+                {this.state.nameTemaSiguiente}
+              </Text>
+              <Icon 
+                style = { styles.Control__Icon } 
+                name = 'chevron-right' 
+                type = 'FontAwesome'/>
+            </View>
+          ):<Text></Text>}
         </View>
+        <Animated.View style = {{
+          position: 'absolute',
+          right: right,
+          bottom: bottom,
+          width: 100,
+          height: 100,
+          backgroundColor: this.state.correcto?'green':'red',
+          borderRadius: 50,
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}>
+          {this.state.correcto?(
+            <React.Fragment>
+
+                <Text style = {{
+                  color: 'white',
+                  fontSize: 14,
+                  fontFamily: FONTS.hindBold
+                }}>Ganaste</Text>
+                <View style = {{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                  <Text style ={{
+                    color: 'white',
+                    fontFamily: FONTS.hindBold,
+                    fontSize: 28,
+                    marginRight: 4,
+                  }} >{this.state.tema.prueba.premio}</Text>
+                  <Icon name ='key' style = {{ 
+                    fontSize: 30, 
+                    color: 'white'
+                  }}/>
+              </View>
+            </React.Fragment>
+          ):(
+            <Text style ={{
+              color: 'white',
+              fontSize: 14,
+              fontFamily: FONTS.hindBold
+            }}>Fallaste</Text>
+          )}
+          
+        </Animated.View>
       </ScrollView>
     
     )
@@ -307,11 +405,12 @@ const styles = StyleSheet.create({
   },
   SeccionPregunta__Header:{
     flexDirection: 'row',
+    alignItems: 'center',
     marginLeft: 16
   },
   SeccionPregunta__Header__Title:{
     fontFamily: FONTS.poiretOneRegular,
-    fontSize: 13,
+    fontSize: 16,
     marginRight: 16,
   },
   SeccionPregunta__Header__Line:{

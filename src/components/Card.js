@@ -18,12 +18,14 @@ export default class Card extends Component {
       const { user } = await getUser(_user._id);
       const { subscripcion } = await getSubscripcion(_user._id,curso._id);
       // console.log(subscripcion);
+      let noAlcanza = true;
       if(user.llaves >= curso.llaves){
-        this.setState({
-          noAlcanza: false,
-          subscripcion: subscripcion
-        });
+        noAlcanza = false;
       }
+      this.setState({
+        noAlcanza: noAlcanza,
+        subscripcion: subscripcion
+      });
     }catch(e){
       console.log(e);
     }
@@ -65,9 +67,6 @@ export default class Card extends Component {
   }
   render(){
     const { curso } = this.props;
-    const backgroundColorLlaves = {
-      backgroundColor: this.state.noAlcanza?'rgba(253, 13, 13, 0.55)': 'rgba(133, 253, 13, 0.55)'
-    }
     const colorIcon = { 
       color: !this.state.subscripcion? 'rgba(253, 13, 13, 0.55)': 'rgba(133, 253, 13, 0.55)s'
     };
@@ -81,12 +80,41 @@ export default class Card extends Component {
             style = { styles.TemaImage }
             source = {{uri: curso.urlImage}}
           >
-            <View style = { styles.Row}>
-              <View style = { [styles.Llaves, backgroundColorLlaves ] }>
-                <Text style = { styles.Llaves__Number }>{curso.llaves}</Text>
-                <Icon style = { styles.LLaves__Icon} name = 'key'/>
-              </View>
-            </View>
+            {
+              this.state.subscripcion?(
+                <View style = { styles.Row}>
+                  <View style = { [styles.Llaves, {
+                    backgroundColor: 'rgba(133, 253, 13, 0.55)'
+                  } ] }>
+                    <Text style = { [styles.Llaves__Number,{ marginRight: 0}]}>$$</Text>
+                  </View>
+                </View>  
+              ):(
+                <React.Fragment>
+                {
+                  this.state.noAlcanza?(
+                    <View style = { styles.Row}>
+                      <View style = { [styles.Llaves, {
+                        backgroundColor: 'rgba(253, 13, 13, 0.55)'
+                      }] }>
+                        <Text style = { styles.Llaves__Number }>{curso.llaves}</Text>
+                        <Icon style = { styles.LLaves__Icon} name = 'key'/>
+                      </View>
+                    </View>
+                  ):(
+                    <View style = { styles.Row}>
+                      <View style = { [styles.Llaves, {
+                        backgroundColor: 'rgba(178, 130, 255, 0.6)'
+                      } ] }>
+                        <Text style = { styles.Llaves__Number }>{curso.llaves}</Text>
+                        <Icon style = { styles.LLaves__Icon} name = 'key'/>
+                      </View>
+                    </View>
+                  )
+                }
+                </React.Fragment>
+              )
+            }
           </ImageBackground>
           <View style = { styles.TemaFooter}>
             <Text style = { styles.TemaTitle }>{curso.nombre}</Text>

@@ -20,10 +20,10 @@ export default class Input extends Component {
     }
     return ''
   }
-  handleFocus = () => Animated.timing(this.state.focus,{toValue: 1}).start()
+  handleFocus = () => Animated.spring(this.state.focus,{toValue: 1,duration: 300 }).start()
   handleBlur = () => {
     if(!this.props.value){
-      Animated.timing(this.state.focus,{toValue: 0}).start()
+      Animated.timing(this.state.focus,{toValue: 0, duration: 300 }).start()
     }
   }
   render() {

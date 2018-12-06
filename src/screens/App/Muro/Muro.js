@@ -28,7 +28,7 @@ export default class Muro extends Component {
   renderItems(){
     return this.state.subscripcions.map((subscripcion)=>{
       return(
-        <Item key = { subscripcion._id } subscripcion = {subscripcion}/>
+        <Item key = { subscripcion._id } subscripcion = {subscripcion} navigation = { this.props.navigation }/>
       )
     })
   }

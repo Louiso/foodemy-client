@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View , StyleSheet, Image } from 'react-native'
+import { Text, View , StyleSheet, Image , TouchableWithoutFeedback } from 'react-native'
 import { FONTS } from '../helpers/FONTS';
 import { Icon } from 'native-base';
 import { BoxShadow } from 'react-native-shadow';
@@ -16,6 +16,12 @@ export default class Item extends Component {
     this.setState({
       curso: curso
     })
+  }
+  handlePress = () => {
+    this.props.navigation.navigate('Tema',{
+      index: this.props.subscripcion.temaActual,
+      curso: this.state.curso
+    });
   }
   render() {
     const { curso } = this.state;
@@ -42,30 +48,32 @@ export default class Item extends Component {
         y:3,
         style:{marginVertical:4}
       }}>
-        <View style = { styles.Item}>
-          <Image style = { styles.Item__Image} source = {{
-            uri: curso.urlImage
-          }}/>
-          <View style = { styles.Item__Body}>
-            <View style = { styles.Item__Body__Head}>
-              <View style = { styles.Item__Body__Head__CursoInfo}>
-                <Text style = { styles.Item__Body__Head__CursoInfo__Name}>{curso.nombre}</Text>
-                <Text style = { styles.Item__Body__Head__CursoInfo__Tema}>Tema Actual: {curso.temas[subscripcion.temaActual].nombre}</Text>
+        <TouchableWithoutFeedback onPress = { this.handlePress }>
+          <View style = { styles.Item}>
+            <Image style = { styles.Item__Image} source = {{
+              uri: curso.urlImage
+            }}/>
+            <View style = { styles.Item__Body}>
+              <View style = { styles.Item__Body__Head}>
+                <View style = { styles.Item__Body__Head__CursoInfo}>
+                  <Text style = { styles.Item__Body__Head__CursoInfo__Name}>{curso.nombre}</Text>
+                  <Text style = { styles.Item__Body__Head__CursoInfo__Tema}>Tema Actual: {curso.temas[subscripcion.temaActual].nombre}</Text>
+                </View>
+                <View style = { styles.Item__Body__Head__StatLlaves }>
+                  <Text style = { styles.Item__Body__Head__StatLlaves__LLaves}>{subscripcion.llavesObtenidas}/{llavesTotales}</Text>
+                  <Icon style = { styles.Item__Body__Head__StatLlaves__Icon} name = "key"/>
+                </View>
               </View>
-              <View style = { styles.Item__Body__Head__StatLlaves }>
-                <Text style = { styles.Item__Body__Head__StatLlaves__LLaves}>{subscripcion.llavesObtenidas}/{llavesTotales}</Text>
-                <Icon style = { styles.Item__Body__Head__StatLlaves__Icon} name = "key"/>
-              </View>
-            </View>
-            <View style = { styles.Item__Body__StatTemas}>
-              <View>
-                <View style = { styles.Item__Body__StatTemas__Barra__Total}></View>
-                <View style = { [styles.Item__Body__StatTemas__Barra__Actual, widthBarra]}></View>
-                <Text style = { styles.Item__Body__StatTemas__Text}>{rateTema}%</Text>
+              <View style = { styles.Item__Body__StatTemas}>
+                <View>
+                  <View style = { styles.Item__Body__StatTemas__Barra__Total}></View>
+                  <View style = { [styles.Item__Body__StatTemas__Barra__Actual, widthBarra]}></View>
+                  <Text style = { styles.Item__Body__StatTemas__Text}>{rateTema}%</Text>
+                </View>
               </View>
             </View>
           </View>
-        </View>
+        </TouchableWithoutFeedback>
       </BoxShadow>
     )
   }
