@@ -6,7 +6,7 @@ import { getTema } from '../../../helpers/tema';
 import { getCurrentUser } from '../../../helpers/auth';
 import { getSubscripcion, updateTemaActual, updateLlavesObtenidas } from '../../../helpers/subscription';
 import { getEvaluacion, postEvaluacion , updateRespuestaEvaluacion } from '../../../helpers/evaluacion';
-import { updateLlavesUser } from '../../../helpers/user';
+import { updateLlavesUser, getUser } from '../../../helpers/user';
 import { getDataTema } from '../../../services/tema.services';
 
 export default class Tema extends Component {
@@ -142,21 +142,22 @@ export default class Tema extends Component {
   }
   handleEvaluar = async () => {
     if(this.state.opcionSelected === null) return console.log('No selecciono nada');
-
     const curso = this.props.navigation.getParam('curso','No-Curso');
-    const user = await getCurrentUser();
+    const _user = await getCurrentUser();
+    const { user } = await getUser(_user._id);
     const respSubs = await getSubscripcion(user._id,curso._id);
     const index = this.props.navigation.getParam('index','No-INDEX');
     const respEval = await getEvaluacion(respSubs.subscripcion._id, curso.temas[index]);
     if(!respEval.ok){
       /* CREAR EVALUACION */
+      console.log(':v');
       const newRespEval = await postEvaluacion(respSubs.subscripcion._id, curso.temas[index], this.state.opcionSelected );
       const respTema = await getTema(curso.temas[index]);
       let correcto = false;
       if(newRespEval.evaluacion.respuesta === respTema.tema.prueba.indexCorrecta){
         correcto = true;
         console.log('Premio',respTema.tema.prueba.premio);
-        const newUser = await updateLlavesUser(user._id, respTema.tema.prueba.premio);
+        const newUser = await updateLlavesUser(user._id, user.llaves + respTema.tema.prueba.premio);
         const newSubscripcion = await updateLlavesObtenidas(respSubs.subscripcion._id, respSubs.subscripcion.llavesObtenidas + respTema.tema.prueba.premio)
       }
       this.setState({
@@ -183,32 +184,43 @@ export default class Tema extends Component {
   }
   renderOptions = (opciones) => {
     return opciones.map((opcion, index) => {
-      let colorCheck;
+      let Option__Circle__Extra;
+      let Option__Text__Extra;
       if(index === this.state.opcionSelected){
         if(this.state.evaluado){
+          Option__Circle__Extra = {
+            height: 15,
+            width: 15,
+            borderRadius: 7.5
+          }
           if(this.state.correcto){
-            colorCheck = {
+            Option__Circle__Extra = {
+              ...Option__Circle__Extra,
               backgroundColor: 'green'
             }
           }else{
-            colorCheck = {
+            Option__Circle__Extra = {
+              ...Option__Circle__Extra,
               backgroundColor: 'red'
+            }
+            Option__Text__Extra = {
+              textDecorationLine: 'line-through'
             }
           }
         }else{
-          colorCheck = {
+          Option__Circle__Extra = {
             backgroundColor: 'black'
           }
         }
       }else{
-        colorCheck = {
+        Option__Circle__Extra = {
           backgroundColor: 'white'
         }
       }
       return (
         <View style = { styles.SeccionPregunta__Option} key = { index }>
-          <View style = { [styles.SeccionPregunta__Option__Circle, colorCheck ]}/>
-          <Text style = { styles.SeccionPregunta__Option__Text} onPress = { () => this.setState({ opcionSelected: index, evaluado: false })}>{opcion}</Text>
+          <View style = { [styles.SeccionPregunta__Option__Circle, Option__Circle__Extra ]}/>
+          <Text style = { [styles.SeccionPregunta__Option__Text, Option__Text__Extra ]} onPress = { () => this.setState({ opcionSelected: index, evaluado: false })}>{opcion}</Text>
         </View>
       );
     });

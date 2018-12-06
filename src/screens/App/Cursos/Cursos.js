@@ -7,6 +7,7 @@ import { getCurrentUser } from '../../../helpers/auth';
 import { FONTS } from '../../../helpers/FONTS';
 
 import { Icon } from 'native-base';
+import { getUser } from '../../../helpers/user';
 
 export default class Cursos extends Component {
   state = {
@@ -18,8 +19,10 @@ export default class Cursos extends Component {
       return <Section  key = {ciclo._id} ciclo = { ciclo } navigation = { this.props.navigation }/>
     });
   }
-  componentDidMount = async () => {
-    const user = await getCurrentUser();
+
+  getData = async() => {
+    const _user = await getCurrentUser();
+    const { user } = await getUser(_user._id)
     const resp = await getCiclos();
     if(resp.ok){
       this.setState({
@@ -27,6 +30,15 @@ export default class Cursos extends Component {
         user:user
       });
     }
+  }
+  componentDidMount = async () => {
+    this.timer = setInterval(()=>{
+      this.getData()
+    },5000);
+    this.getData()
+  }
+  componentWillUnmount(){
+    clearInterval(this.timer)
   }
   render() {
     return (
