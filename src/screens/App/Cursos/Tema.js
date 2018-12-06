@@ -179,12 +179,11 @@ export default class Tema extends Component {
   handleEvaluar = async () => {
     if(this.state.opcionSelected === null) return console.log('No selecciono nada');
     const curso = this.props.navigation.getParam('curso','No-Curso');
-
+    const index = this.props.navigation.getParam('index','No-INDEX');
     const _user = await getCurrentUser();
     const { user } = await getUser(_user._id);
     const respSubs = await getSubscripcion(user._id,curso._id);
-    const index = this.props.navigation.getParam('index','No-INDEX');
-    let _idTema = this.getIndexTema();
+    let _idTema = this.getIndexTema(curso,index);
     const respEval = await getEvaluacion(respSubs.subscripcion._id, _idTema);
     /* Si no se tiene evaluacion entonces evaluar */
     if(!respEval.ok){
@@ -266,7 +265,7 @@ export default class Tema extends Component {
         { this.renderOptions(prueba.opciones) }
         <Text 
           style = { [styles.Evaluar, this.state.evaluado? {color: '#aaaaaaaa'}:{}] } 
-          onPress = { this.handleEvaluar } 
+          onPress = { this.handleEvaluar }
           disabled = { this.state.evaluado }
           >{ this.state.evaluado?'Evaluado':'Evaluar'}
         </Text>

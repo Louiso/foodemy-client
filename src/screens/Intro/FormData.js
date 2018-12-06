@@ -62,7 +62,7 @@ export default class FormData extends Component {
   render() {
     
     return (
-      <View style = {{ flex: 1, alignItems: 'center'}}>
+      <View style = {{ flex: 1, alignItems: 'center', backgroundColor: 'white'}}>
         <View style = {styles.StatusBar}/>
         <View style = {{
           width: 280,
