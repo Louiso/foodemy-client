@@ -42,12 +42,15 @@ export default class Cursos extends Component {
   }
   render() {
     return (
-      <ScrollView style = {{ flex: 1 }}>
+      <ScrollView style = {{ flex: 1, backgroundColor: 'rgba(95, 169, 169, 0.85)'}}>
         <View style = { styles.ImageContainer }>
           <Text style = { styles.Llaves }>{ this.state.user?this.state.user.llaves: 0} </Text>
           <Icon style = { styles.Icon } name='key'/>
         </View>
         { this.renderSections() }
+        <View style = { {
+          height: 24
+        }}/>
       </ScrollView>
     )
   }
@@ -65,7 +68,8 @@ const styles = StyleSheet.create({
     fontSize: 48
   },
   Icon:{
-    fontSize: 48
+    fontSize: 48,
+    color: 'rgba(198, 198, 56, 1)'
   }
 
 })

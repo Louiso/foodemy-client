@@ -11,7 +11,7 @@ export default createMaterialTopTabNavigator({
     navigationOptions: {
       tabBarLabel: 'Muro',
       tabBarIcon: ({tintColor}) => (
-        <Icon name = 'bookmarks' color = {tintColor} style = { { fontSize: 24}}/>
+        <Icon name = 'bookmarks' style = { { fontSize: 24, color: tintColor}}/>
       )
     }
   },
@@ -20,7 +20,7 @@ export default createMaterialTopTabNavigator({
     navigationOptions: {
       tabBarLabel: 'Cursos',
       tabBarIcon: ({tintColor}) => (
-        <Icon name = 'book' color = {tintColor} style = { { fontSize: 24}}/>
+        <Icon name = 'book' style = { { fontSize: 24, color: tintColor}}/>
       )
     }
   },
@@ -29,7 +29,7 @@ export default createMaterialTopTabNavigator({
     navigationOptions: {
       tabBarLabel: 'Social',
       tabBarIcon: ({tintColor}) => (
-        <Icon name = 'contacts' color = {tintColor} style = { { fontSize: 24}}/>
+        <Icon name = 'contacts' style = { { fontSize: 24, color : tintColor}}/>
       )
     }
   }
@@ -38,9 +38,9 @@ export default createMaterialTopTabNavigator({
   tabBarPosition: 'bottom',
   tabBarOptions:{
     activeTintColor: 'orange',
-    inactiveTintColor: 'grey',
+    inactiveTintColor: 'rgba(229, 229, 229, 0.85)',
     style: {
-      backgroundColor: '#f2f2f2'
+      backgroundColor: '#36577E'
     },
     showIcon: true
   }

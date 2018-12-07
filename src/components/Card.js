@@ -17,7 +17,6 @@ export default class Card extends Component {
       const _user = await getCurrentUser();
       const { user } = await getUser(_user._id);
       const { subscripcion } = await getSubscripcion(_user._id,curso._id);
-      // console.log(subscripcion);
       let noAlcanza = true;
       if(user.llaves >= curso.llaves){
         noAlcanza = false;
@@ -67,9 +66,6 @@ export default class Card extends Component {
   }
   render(){
     const { curso } = this.props;
-    const colorIcon = { 
-      color: !this.state.subscripcion? 'rgba(253, 13, 13, 0.55)': 'rgba(133, 253, 13, 0.55)s'
-    };
     const nameIcon = !this.state.subscripcion? 'lock': 'unlock' 
     return (
       <View 
@@ -83,46 +79,61 @@ export default class Card extends Component {
             {
               this.state.subscripcion?(
                 <View style = { styles.Row}>
-                  <View style = { [styles.Llaves, {
-                    backgroundColor: 'rgba(133, 253, 13, 0.55)'
-                  } ] }>
+                  <View style = { styles.Llaves }>
                     <Text style = { [styles.Llaves__Number,{ marginRight: 0}]}>$$</Text>
                   </View>
                 </View>  
               ):(
-                <React.Fragment>
-                {
-                  this.state.noAlcanza?(
-                    <View style = { styles.Row}>
-                      <View style = { [styles.Llaves, {
-                        backgroundColor: 'rgba(253, 13, 13, 0.55)'
-                      }] }>
-                        <Text style = { styles.Llaves__Number }>{curso.llaves}</Text>
-                        <Icon style = { styles.LLaves__Icon} name = 'key'/>
-                      </View>
-                    </View>
-                  ):(
-                    <View style = { styles.Row}>
-                      <View style = { [styles.Llaves, {
-                        backgroundColor: 'rgba(178, 130, 255, 0.6)'
-                      } ] }>
-                        <Text style = { styles.Llaves__Number }>{curso.llaves}</Text>
-                        <Icon style = { styles.LLaves__Icon} name = 'key'/>
-                      </View>
-                    </View>
-                  )
-                }
-                </React.Fragment>
+                <View style = { styles.Row}>
+                  <View style = { styles.Llaves }>
+                    <Text style = { styles.Llaves__Number }>{curso.llaves}</Text>
+                    <Icon style = { styles.LLaves__Icon} name = 'key'/>
+                  </View>
+                </View>
               )
             }
           </ImageBackground>
-          <View style = { styles.TemaFooter}>
-            <Text style = { styles.TemaTitle }>{curso.nombre}</Text>
-            <Icon 
-              name= { nameIcon } 
-              style = { [ styles.TemaIcon, colorIcon ]}
-              />
-          </View>
+          {
+            this.state.subscripcion?(
+              <View style = {  [styles.TemaFooter,{
+                backgroundColor: 'rgba(50, 150, 30, 0.8)'
+              }]}>
+                <Text style = { styles.TemaTitle }>{curso.nombre}</Text>
+                <Icon 
+                  name= { nameIcon } 
+                  style = { [styles.TemaIcon, {
+                    color: 'white'
+                  }] }
+                  />
+              </View>
+            ):(
+              <React.Fragment>
+                { this.state.noAlcanza?(
+                  <View style = { [styles.TemaFooter, {
+                    backgroundColor: 'rgba(253, 13, 13, 0.55)'
+                  }]}>
+                    <Text style = { styles.TemaTitle }>{curso.nombre}</Text>
+                    <Icon 
+                      name= { nameIcon } 
+                      style = { styles.TemaIcon }
+                      />
+                  </View>
+                ):(
+                  <View style = { [styles.TemaFooter,{
+                    backgroundColor: 'rgba(198, 198, 56, 1)'
+                  }]}>
+                    <Text style = { styles.TemaTitle }>{curso.nombre}</Text>
+                    <Icon 
+                      name= { nameIcon } 
+                      style = { styles.TemaIcon}
+                      />
+                  </View>
+                )}
+                
+              </React.Fragment>
+            )
+          }
+          
         </TouchableOpacity>
       </View>
     )
@@ -132,13 +143,14 @@ export default class Card extends Component {
 const styles = StyleSheet.create({
   Tema:{
     width: 120,
+    borderRadius: 5,
+    overflow: 'hidden',
     marginRight: 6,
     marginLeft: 6,
   },
   TemaImage: {
     width: 120,
     height: 88,
-    backgroundColor: 'red'
   },
   TemaFooter: {
     height: 32,
@@ -159,18 +171,20 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   Llaves:{
-    backgroundColor: '#00000066',
+    backgroundColor: '#000000aa',
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 2
+    padding: 2,
+    paddingLeft: 4,
+    paddingRight: 4
   },
   Llaves__Number:{
     color: 'white',
     fontSize: 13,
-    marginRight: 4
+    marginRight: 2
   },
   LLaves__Icon:{
-    color: 'white',
+    color: 'yellow',
     fontSize: 16
   }
 })

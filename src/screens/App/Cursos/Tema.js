@@ -126,10 +126,10 @@ export default class Tema extends Component {
       }
     ).start((animacion)=>{
       if(animacion.finished){
-        Animated.timing(
+        Animated.spring(
           this.state.animacion,{
             toValue: 100,
-            duration: 1000,
+            duration: 3000,
             delay: 500
           }
         ).start((animacion)=>{
@@ -213,12 +213,12 @@ export default class Tema extends Component {
           if(this.state.correcto){
             Option__Circle__Extra = {
               ...Option__Circle__Extra,
-              backgroundColor: 'green'
+              backgroundColor: 'rgba(50, 150, 30, 0.8)'
             }
           }else{
             Option__Circle__Extra = {
               ...Option__Circle__Extra,
-              backgroundColor: 'red'
+              backgroundColor: 'rgba(253, 13, 13, 0.55)'
             }
             Option__Text__Extra = {
               textDecorationLine: 'line-through'
@@ -226,12 +226,12 @@ export default class Tema extends Component {
           }
         }else{
           Option__Circle__Extra = {
-            backgroundColor: 'black'
+            backgroundColor: '#36577E'
           }
         }
       }else{
         Option__Circle__Extra = {
-          backgroundColor: 'white'
+          backgroundColor: 'rgba(229, 229, 229, 0.85)'
         }
       }
       return (
@@ -257,14 +257,14 @@ export default class Tema extends Component {
         <View style = { styles.SeccionPregunta__Header}>
           <Text style = { styles.SeccionPregunta__Header__Title}>
             DESBLOQUEA { this.state.tema? this.state.tema.prueba.premio: '0'}</Text>
-          <Icon name='key' style = {{ fontSize: 20}}/>
+          <Icon name='key' style = {{ fontSize: 20, color: 'rgba(198, 198, 56, 1)'}}/>
           <Text style = { styles.SeccionPregunta__Header__Title}> :</Text>
           <View style = { styles.SeccionPregunta__Header__Line}/>
         </View>
         <Text style = { styles.SeccionPregunta__Pregunta}>{prueba.pregunta}</Text>
         { this.renderOptions(prueba.opciones) }
         <Text 
-          style = { [styles.Evaluar, this.state.evaluado? {color: '#aaaaaaaa'}:{}] } 
+          style = { [styles.Evaluar, this.state.evaluado? {color: 'rgba(229, 229, 229, 1)'}:{}] } 
           onPress = { this.handleEvaluar }
           disabled = { this.state.evaluado }
           >{ this.state.evaluado?'Evaluado':'Evaluar'}
@@ -278,7 +278,7 @@ export default class Tema extends Component {
     }
     const right = this.state.animacion.interpolate({
       inputRange: [ 0, 50 ,  100],
-      outputRange: [ -100, 130 , 460]
+      outputRange: [ -100, 130 , 360]
     })
     const bottom = this.state.animacion.interpolate({
       inputRange: [0, 50, 100],
@@ -287,7 +287,8 @@ export default class Tema extends Component {
     return (
       <ScrollView 
         style = {{
-          flex: 1
+          flex: 1,
+          backgroundColor: 'rgba(95, 169, 169, 0.85)'
         }}
         contentContainerStyle={{
           alignItems: 'center'
@@ -314,7 +315,7 @@ export default class Tema extends Component {
           {this.state.nameTemaSiguiente!==''? (
             <View style = { styles.Control }>
               <Text 
-                style = { styles.Control__Text} 
+                style = { [styles.Control__Text, this.state.evaluado?{color: '#36577E', fontFamily: FONTS.hindSemiBold}:{}]} 
                 disabled = { this.handleDisabledSiguiente() } 
                 onPress = { this.handleSiguiente }>
                 {this.state.nameTemaSiguiente}
@@ -332,7 +333,7 @@ export default class Tema extends Component {
           bottom: bottom,
           width: 100,
           height: 100,
-          backgroundColor: this.state.correcto?'green':'red',
+          backgroundColor: this.state.correcto?'rgba(50, 150, 30, 0.8)':'rgba(253, 13, 13, 0.55)',
           borderRadius: 50,
           justifyContent: 'center',
           alignItems: 'center'
@@ -341,7 +342,7 @@ export default class Tema extends Component {
             <React.Fragment>
 
                 <Text style = {{
-                  color: 'white',
+                  color: 'rgba(229, 229, 229, 0.85)',
                   fontSize: 14,
                   fontFamily: FONTS.hindBold
                 }}>Ganaste</Text>
@@ -381,7 +382,8 @@ const styles = StyleSheet.create({
     marginTop: 28,
     fontSize: 24,
     textAlign: 'center',
-    fontFamily: FONTS.hindBold
+    fontFamily: FONTS.hindBold,
+    color: 'rgba(229, 229, 229, 0.85)'
   },
   Parrafo: {
     width: 300,
@@ -396,8 +398,8 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   Image: {
-    width: 120,
-    height: 96
+    width: 200,
+    height: 200
   },
   SeccionPregunta:{
     marginTop: 28,
@@ -460,12 +462,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   Control__Text:{
-    fontFamily: FONTS.poiretOneRegular,
+    fontFamily: FONTS.hindRegular,
     fontSize: 14,
     marginHorizontal: 8
   },
   Control__Icon:{
     fontSize: 14,
-    color: '#999999'
+    color: '#36577E'
   }
 })

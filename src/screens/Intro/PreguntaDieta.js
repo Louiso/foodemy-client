@@ -3,9 +3,12 @@ import { Text, View, StyleSheet } from 'react-native'
 import { Constants } from 'expo'
 import { FONTS } from '../../helpers/FONTS';
 export default class PreguntaDieta extends Component {
+  state = {
+    opcion: null
+  }
   render() {
     return (
-      <View style = {{ flex: 1, alignItems: 'center',backgroundColor: 'white'}}>
+      <View style = {{ flex: 1, alignItems: 'center',backgroundColor: 'rgba(95, 169, 169, 0.85)'}}>
         <View style = {styles.StatusBar}/>
         <View style = {{
           width: 280,
@@ -16,8 +19,22 @@ export default class PreguntaDieta extends Component {
           
           <View style = {styles.Opciones}>
 
-            <Text style = { styles.Opcion }>Si</Text>
-            <Text style = { styles.Opcion }>No</Text>
+            <Text style = { [styles.Opcion, this.state.opcion!==null && this.state.opcion === 0? { textDecorationLine: 'underline' }:{}] } onPress = {()=>{
+              this.setState({
+                opcion: 0
+              })
+              setTimeout(()=>{
+                this.props.onPress(this.props.index + 1)
+              }, 200)
+            }}>Si</Text>
+            <Text style = { [styles.Opcion,this.state.opcion!==null && this.state.opcion === 1? { textDecorationLine: 'underline' }:{}] } onPress = {() => {
+              this.setState({
+                opcion: 1
+              })
+              setTimeout(()=>{
+                this.props.onPress(this.props.index + 1)
+              }, 200)
+            }}>No</Text>
 
           </View>
 

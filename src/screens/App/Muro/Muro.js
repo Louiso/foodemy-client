@@ -36,6 +36,9 @@ export default class Muro extends Component {
     return (
       <ScrollView style = { styles.Muro }>
         { this.renderItems() }
+        <View style = { {
+          height: 24
+        }}/>
       </ScrollView>
     )
   }
@@ -45,6 +48,7 @@ export default class Muro extends Component {
 const styles = StyleSheet.create({
   Muro: {
     flex: 1,
-    paddingTop: 24
+    paddingTop: 24,
+    backgroundColor : 'rgba(95, 169, 169, 0.85)'
   }
 })

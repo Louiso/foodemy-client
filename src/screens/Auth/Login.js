@@ -76,7 +76,8 @@ export default class Login extends Component {
       <Animated.View 
         style = {{
           flex: 1,
-          paddingBottom: this.state.keyboardHeight
+          paddingBottom: this.state.keyboardHeight,
+          backgroundColor: 'rgba(95, 169, 169, 0.85)'
         }}  
         >
         <TouchableWithoutFeedback onPress = {()=> Keyboard.dismiss()}>
@@ -86,9 +87,10 @@ export default class Login extends Component {
               <Animated.Image 
                 style = {{
                   height: this.state.imageHeight,
-                  width: this.state.imageHeight
+                  width: this.state.imageHeight,
+                  borderRadius: 70
                 }} 
-                source = {{ uri: 'https://images.goodsmile.info/cgm/images/product/20131002/4076/26528/large/439eacec24633df79d0e2b0c3bebeb0e.jpg'}}/>
+                source = {{ uri: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1400&q=80'}}/>
             </View>
             <View style = {styles.Form}>
               <Input

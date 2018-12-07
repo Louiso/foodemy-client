@@ -83,7 +83,7 @@ export default class Item extends Component {
 const styles = StyleSheet.create({
   Item:{
     flexDirection: 'row',
-    backgroundColor: '#aaaaaa',
+    backgroundColor: 'rgba(52, 121, 121, 0.85)',
     marginBottom: 0
   },
   Item__Image:{
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
   },
   Item__Body__StatTemas__Barra__Actual:{
     position: 'absolute',
-    backgroundColor: '#333333',
+    backgroundColor: 'rgba(235, 150, 40, 0.85)',
     width: 72,
     height: 16,
     borderRadius: 8

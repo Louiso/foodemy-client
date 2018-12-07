@@ -5,7 +5,7 @@ import { FONTS } from '../../helpers/FONTS';
 export default class PresentaMetabot extends Component {
   render() {
     return (
-      <View style = {{ flex: 1, alignItems: 'center',backgroundColor: 'white'}}>
+      <View style = {{ flex: 1, alignItems: 'center',backgroundColor: 'rgba(95, 169, 169, 0.85)'}}>
         <View style = {styles.StatusBar}/>
         <View style = {{
           width: 280,
@@ -17,12 +17,12 @@ export default class PresentaMetabot extends Component {
             alignItems: 'center'
           }}>
             <Image style = {{
-              width: 140,
-              height: 140
+              width: 125,
+              height: 100
             }} 
-              source = { { uri: 'https://i2.wp.com/www.unotaku.net/wp-content/uploads/2017/08/Watamote-8.gif?resize=631%2C352'}}/>
+              source = { require('../../../assets/key.png')}/>
           </View>
-          <Text style = {styles.Pregunta}>Te presento a MetaBot, tu compañero en el metabolismo</Text>
+          <Text style = {styles.Pregunta}>Consigue mas llaves y desbloquea mas cursos</Text>
           <Text style = { styles.Continuar} onPress = { () => this.props.onPress(this.props.index + 1)}>continuar</Text>
           <Text style = { styles.Login } onPress = { this.props.goToLogin } >Tengo una cuenta</Text>
         </View>
