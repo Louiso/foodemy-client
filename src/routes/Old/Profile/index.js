@@ -3,9 +3,20 @@ import { Text, View , Image , StyleSheet , ScrollView } from 'react-native'
 
 import { Icon } from 'native-base'
 import { FONTS } from '../../../helpers/FONTS';
+import { getCurrentUser } from '../../../helpers/auth';
 
 export default class Profile extends Component {
+  state = {
+    user: null
+  }
+  componentDidMount = async () => {
+    const user = await getCurrentUser();
+    this.setState({
+      user: user
+    })
+  }
   render() {
+    if(!this.state.user) return( <Text>Loading...</Text>)
     return (
       <ScrollView style = {{
         flex: 1
@@ -15,7 +26,7 @@ export default class Profile extends Component {
           <View style = { styles.Header__Image__Container }>
             <Image
               source = {{
-                uri: 'https://img.etimg.com/thumb/msid-59878652,width-643,imgsize-122108,resizemode-4/this-new-app-will-help-you-perfect-the-art-of-taking-a-selfie.jpg'
+                uri: 'http://www.asasonidistas.org/wp-content/uploads/2017/07/no_photo.jpg'
               }} 
               style = { styles.Header__Image }/>
           </View>
@@ -23,13 +34,13 @@ export default class Profile extends Component {
         </View>
         <View style = { styles.Tabs }>
           <Text style = { styles.Tabs__Tab }>
-            1.75 m
+            { this.state.user.altura } m
           </Text>
           <Text style = { styles.Tabs__Tab }>
-            72 kg
+            { this.state.user.peso } kg
           </Text>
           <Text style = { styles.Tabs__Tab}>
-            IMC: 24
+            IMC: { (this.state.user.peso / Math.pow(this.state.user.altura,2)).toFixed(2)}
           </Text>
         </View>
         <View style = { styles.Body }>
@@ -37,19 +48,19 @@ export default class Profile extends Component {
           <View style = { styles.Body__Content}>
             <View>
               <Text style = { styles.Body__Content__Label }>Nombre de Usuario: </Text>
-              <Text style = { styles.Body__Content__Input }>Luis Alfredo Sullca Huaracca</Text>
+              <Text style = { styles.Body__Content__Input }>{ this.state.user.username }</Text>
             </View>
             <View>
               <Text style = { styles.Body__Content__Label }>Correo Electronico: </Text>
-              <Text style = { styles.Body__Content__Input }>Gransullca.25@gmail.com</Text>
+              <Text style = { styles.Body__Content__Input }>{ this.state.user.email }</Text>
             </View>
             <View>
               <Text style = { styles.Body__Content__Label }>Sexo: </Text>
-              <Text style = { styles.Body__Content__Input }>Masculino</Text>
+              <Text style = { styles.Body__Content__Input }>{ this.state.user.sexo === 'M'? 'Masculino': 'Femenino'}</Text>
             </View>
             <View>
               <Text style = { styles.Body__Content__Label }>Edad: </Text>
-              <Text style = { styles.Body__Content__Input }>23 años</Text>
+              <Text style = { styles.Body__Content__Input }>{ this.state.user.edad }</Text>
             </View>
           </View>
         </View>

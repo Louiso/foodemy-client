@@ -71,10 +71,16 @@ export default class Register extends Component {
     const { username , email , password , confirmPassword } = this.state;
     try{
       if(password !== confirmPassword) throw new Error('Contraseñas no coinciden')
+      const data = this.props.navigation.getParam('data',{});
+      console.log(data);
       const resp = await register({
         username,
         email,
-        password
+        password,
+        peso: data.peso,
+        altura: data.altura,
+        edad: data.edad,
+        sexo: data.sexo
       })
       if(resp.ok){
         this.props.navigation.navigate('Inicio');

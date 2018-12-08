@@ -24,7 +24,7 @@ export default class PresentaMetabot extends Component {
           </View>
           <Text style = {styles.Pregunta}>Consigue mas llaves y desbloquea mas cursos</Text>
           <Text style = { styles.Continuar} onPress = { () => this.props.onPress(this.props.index + 1)}>continuar</Text>
-          <Text style = { styles.Login } onPress = { this.props.goToLogin } >Tengo una cuenta</Text>
+          <Text style = { styles.Login } onPress = { () => this.props.goToLogin() } >Tengo una cuenta</Text>
         </View>
       </View>
     )

@@ -10,11 +10,13 @@ export default class Intro extends Component {
     const x = width * index;
     this.scroller.scrollTo({x: x, y: 0});
   }
-  goToLogin = () => {
+  goToLogin = (data = {}) => {
     this.props.navigation.navigate('Login');
   }
-  goToRegister = () => {
-    this.props.navigation.navigate('Register');
+  goToRegister = (data = {}) => {
+    this.props.navigation.navigate('Register',{
+      data: data
+    });
   }
   render() {
     return (

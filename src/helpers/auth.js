@@ -46,7 +46,11 @@ const register = async (user) => {
       body: JSON.stringify({
         username: user.username,
         email: user.email,
-        password: user.password
+        password: user.password,
+        altura: user.altura,
+        edad: user.edad,
+        peso: user.peso,
+        sexo: user.sexo
       })
     })
 

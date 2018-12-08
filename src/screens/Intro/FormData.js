@@ -7,7 +7,7 @@ export default class FormData extends Component {
     altura: 1.70,
     peso: 65,
     edad: 18,
-    sexo: 'NN'
+    sexo: 'M'
   }
   renderOptionsAltura(){
     let array = new Array(100).fill(0);
@@ -141,8 +141,8 @@ export default class FormData extends Component {
               <View style = { styles.Line }/>
             </View>
           </View>
-          <Text style = { styles.Continuar} onPress = { this.props.goToRegister } >continuar</Text>
-          <Text style = { styles.Login } onPress = { this.props.goToLogin } >Tengo una cuenta</Text>
+          <Text style = { styles.Continuar} onPress = { () => this.props.goToRegister(this.state) } >continuar</Text>
+          <Text style = { styles.Login } onPress = { () => this.props.goToLogin(this.state) } >Tengo una cuenta</Text>
         </View>
       </View>
     )
