@@ -5,7 +5,7 @@ import { FONTS } from '../../../helpers/FONTS';
 import { getTema } from '../../../helpers/tema';
 import { getCurrentUser } from '../../../helpers/auth';
 import { getSubscripcion, updateTemaActual, updateLlavesObtenidas } from '../../../helpers/subscription';
-import { getEvaluacion, postEvaluacion , updateRespuestaEvaluacion } from '../../../helpers/evaluacion';
+import { getEvaluacion, postEvaluacion } from '../../../helpers/evaluacion';
 import { updateLlavesUser, getUser } from '../../../helpers/user';
 
 export default class Tema extends Component {
@@ -23,8 +23,6 @@ export default class Tema extends Component {
     try{
       const index = this.props.navigation.getParam('index','No-INDEX');
       const curso = this.props.navigation.getParam('curso','No-Curso');
-      // const dataTema = await getDataTema(index, curso)
-      // console.log(dataTema);
       const _idTemaActual = this.getIndexTema(curso,index)
       let nameTemaAnterior = '';
       if(index !== 0){
@@ -39,7 +37,6 @@ export default class Tema extends Component {
         nameTemaSiguiente = resp.tema?resp.tema.nombre:''
       }
       const resp = await getTema(_idTemaActual);
-      console.log(resp);
       const user = await getCurrentUser();
       const respSubs = await getSubscripcion(user._id,curso._id);
       const respEval = await getEvaluacion(respSubs.subscripcion._id, _idTemaActual);
@@ -59,7 +56,6 @@ export default class Tema extends Component {
           correcto = true;
         }
       }
-      console.log(tema)
       this.setState({
         tema: tema,
         evaluado: evaluado,

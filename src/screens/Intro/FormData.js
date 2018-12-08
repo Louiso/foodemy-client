@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { Text, View, StyleSheet, Picker, Alert } from 'react-native'
 import { Constants } from 'expo'
 import { FONTS } from '../../helpers/FONTS';
-import { CustomPicker } from 'react-native-custom-picker'
 export default class FormData extends Component {
   state = {
     altura: 1.70,
@@ -62,7 +61,7 @@ export default class FormData extends Component {
   render() {
     
     return (
-      <View style = {{ flex: 1, alignItems: 'center',backgroundColor: 'rgba(95, 169, 169, 0.85)'}}>
+      <View style = {{ flex: 1, alignItems: 'center',backgroundColor: 'rgba(95, 169, 169, 1)'}}>
         <View style = {styles.StatusBar}/>
         <View style = {{
           width: 280,

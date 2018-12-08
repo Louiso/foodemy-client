@@ -10,9 +10,9 @@ import Cursos from './src/screens/App/Cursos/Cursos';
 import Tema from './src/screens/App/Cursos/Tema';
 import Social from './src/screens/App/Social/Social';
 import Muro from './src/screens/App/Muro/Muro';
-
 import Routes from './src/routes/index'
 import { loadFonts } from './src/helpers/loader';
+import Profile from './src/routes/Old/Profile';
 
 export default class App extends React.Component {
 /*   state = {

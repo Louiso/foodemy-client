@@ -4,6 +4,7 @@ import Cursos from '../../../../screens/App/Cursos/Cursos';
 import Muro from '../../../../screens/App/Muro/Muro';
 import Social from '../../../../screens/App/Social/Social';
 import { Icon } from 'native-base'
+import Profile from '../../Profile';
 
 export default createMaterialTopTabNavigator({
   Muro: {
@@ -24,12 +25,12 @@ export default createMaterialTopTabNavigator({
       )
     }
   },
-  Social: {
-    screen: Social,
+  Perfil: {
+    screen: Profile,
     navigationOptions: {
-      tabBarLabel: 'Social',
+      tabBarLabel: 'Perfil',
       tabBarIcon: ({tintColor}) => (
-        <Icon name = 'contacts' style = { { fontSize: 24, color : tintColor}}/>
+        <Icon name = 'person' style = { { fontSize: 24, color : tintColor}}/>
       )
     }
   }

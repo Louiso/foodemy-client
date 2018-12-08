@@ -8,7 +8,7 @@ export default class PreguntaEsfuerzo extends Component {
   }
   render() {
     return (
-      <View style = {{ flex: 1, alignItems: 'center',backgroundColor: 'rgba(95, 169, 169, 0.85)'}}>
+      <View style = {{ flex: 1, alignItems: 'center',backgroundColor: 'rgba(95, 169, 169, 1)'}}>
         <View style = {styles.StatusBar}/>
         <View style = {{
           width: 280,
